@@ -1,0 +1,122 @@
+Spring
+SSM=Spring  SpringMVC  MyBatis
+Struts1 Struts2 Hibernate
+1、什么是Spring
+Spring是一个开源的轻量级的应用开发框架，其目的简化企业级应用开发程序，减少侵入。
+Spring提供IOC和AOP的应用，可以将组建之间的耦合度降低，也就是解耦。
+Spring为系统提供了一个整体的解决方案，开发者除了利用Spring提供的功能，也可以与第三方
+框架集合整合，可以自由选择采用哪种技术进行开发。
+
+2、JavaBean介绍
+javabean规范不是语法，是一种习惯性的规范，用这个规范定义起来的类使用简单和方便，
+有时候javabean的类也叫做pojo(plain简单的 ordinary普通的 javaobject)
+javabean包含属性，构造，setter和getter，以及一些简单的运算，不能包含业务逻辑。
+EJB
+
+3、Spring容器
+在Spring中，任何的java类和javabean类都被当做bean来处理，这些bean通过容器来管理和应用。
+Spring容器实现了IOC和AOP机制，这些机制可以简化bean对象的创建和bean之间的解耦。
+Spring容器有BeanFactory和ApplicationContext两种类型。
+
+4、什么时候需要用Spring（当需要创建和管理bean的时候就可以使用）
+5、如何使用Spring框架
+ApplicationContext继承自BeanFactory接口，用于更过的企业级方法，所以推荐使用。
+案例：实例化Spring的容器
+ 1)创建工程，导入5个Spring的jar包
+ 2)src或者硬盘中创建spring的配置文件，applicationContext.xml别的名字也行
+ 3)测试容器的实例化(junit测试)
+
+6、创建对象(bean实例化)的几种方式
+//1、通过构造器的方式创建对象
+//2、静态工厂方法(静态方法，一般用来工具方法，直接通过类名.的方式调用，不需要创建对象再调用此方法)
+	/**好处：1、方法有名字，可以见名知意
+	 *       2、有时候外部调用只需要拿到一个实例即可，而不关心是否是新的实例，
+	  *           又或者我们对外部提供一个实例时，使用工厂方法，就可以很容易的在内部进行
+	  *         控制，防止创建不必要的对象，减少开支。
+	 *     3、静态方法可以返回原类型的子类
+	*/
+//3、实例工厂方法
+
+任务：api中去查看GregorianCalendar  Calendar Date这三个类的构造，方法，之间的关系。
+
+7、Spring容器的使用
+BeanFactory和ApplicationContext两种类型，仅仅是维护了bean定义及其相互依赖关系的接口。
+通过其可以访问bean的定义。
+首先在applicationContext.xml文件中添加bean的定义<bean id="标识符" class="类型"></bean>
+
+8、bean的作用域
+容器实例化bean对象时，可以实例化以下几个作用域的bean，通过<bean>的scope=""设置
+8.1、singleton单例
+使用scope="singleton"定义的bean，容器仅创建一个实例，也就是每一次容器返回的
+都是同一个对象
+
+8.2、prototype(复数)
+使用prototype定义的bean，每一个容器返回的都是新的对象
+
+8.3、request
+该属性修饰的bean，每一次HTTP请求都会创建一个新的bean
+
+8.4、session
+同一个session共享同一个bean，不同的session使用不同的bean
+
+8.5、global-session
+所有的session共享一个bean
+
+9、bean的生命周期回调
+9.1、<bean>中添加属性init-method="方法名"      指定bean初始化的回调函数
+9.2、<bean>中添加属性destory-method="方法名" 指定bean销毁的回调函数(只适用于singleton)
+以上过程就可以理解为 容器管理了bean的创建过程
+也可以在顶级的<beans></beans>中添加属性 default-init-method和default-destroy-method,
+来指定所有的bean的相关回调函数
+
+作业任务：
+class ExampleBean{
+	public ExampleBean(){.....}
+	public void init(){.....}
+	public void destory(){....}
+}
+bean的销毁随着容器的销毁而销毁
+//此类型有close方法的定义
+AbstractApplicationContext acc = (AbstractApplicationContext)ac;
+acc.close();
+
+10、在ApplicationContext实现的默认行为就是在实例化容器的时候，将所有的
+singleton bean提前进行实例化。
+如果不想让一个singleton bean提前进行实例化，可以配置<bean>lazy-init="true",
+配置了这个属性之后，在第一次使用时被实例化。
+也可以在顶级的<beans>里面配置default-lazy-init="true"
+
+11、指定bean的依赖关系
+当一个bean和另一个bean存在依赖关系时，可以在<bean>里面配置
+depends-on="bean的标识",如果存在多个依赖，可以写多个，中间以","分割
+
+12、IOC
+Inversion Of Control 译为 “控制反转”
+IOC是指程序中对象的获取方式发生反转，由最初的new方式创建，转变成由第三方框架创建
+并注入。第三方框架一般通过配置的方式指定注入对象的具体实现，从而减低了对象之间的
+耦合度。
+IOC按实现的不同，可以分为  “依赖注入DI”  和  “依赖查找” 两种方式
+Spring容器是采用 “依赖注入DI” 实现了IOC机制，IOC是Spring的核心之一。
+
+依赖注入DI：Dependency Injection 翻译为 依赖注入
+DI的基本原理是将一起工作的具有关系的对象，通过构造或者set的方式建立关联，
+因此容器的工作就是创建bean时 注入那些依赖关系。
+IOC是一种思想。而DI是实现IOC的技术途径，DI主要有两种方式注入：setter 构造器
+
+13、setter注入
+        通过调用无参构造或者无参static工厂方法实例化bean后，调用该bean的set方法来实现
+       构造器注入
+       通过调用有参构造来实现的，在实例化bean的时候，根据参数类型来执行相应的构造
+
+
+
+
+
+
+
+
+
+
+
+
+
